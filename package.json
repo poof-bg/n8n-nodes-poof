@@ -1,5 +1,5 @@
 {
-  "name": "n8n-nodes-poof",
+  "name": "@poof-bg/n8n-nodes-poof",
   "version": "1.0.0",
   "description": "n8n nodes for Poof background removal API",
   "keywords": [
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/poof-bg/poof"
+    "url": "https://github.com/poof-bg/n8n-nodes-poof"
   },
   "main": "dist/index.js",
   "scripts": {

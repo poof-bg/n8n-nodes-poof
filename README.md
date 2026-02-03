@@ -1,4 +1,4 @@
-# n8n-nodes-poof
+# @poof-bg/n8n-nodes-poof
 
 This is an n8n community node for the [Poof](https://poof.bg) background removal API.
 
@@ -13,14 +13,14 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 ### npm
 
 ```bash
-npm install n8n-nodes-poof
+npm install @poof-bg/n8n-nodes-poof
 ```
 
 ### n8n Desktop/Cloud
 
 1. Go to **Settings > Community Nodes**
 2. Select **Install**
-3. Enter `n8n-nodes-poof` and click **Install**
+3. Enter `@poof-bg/n8n-nodes-poof` and click **Install**
 
 ## Operations
 
