@@ -6,6 +6,7 @@ import type {
 	IDataObject,
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
+import FormData from 'form-data';
 
 export class Poof implements INodeType {
 	description: INodeTypeDescription = {
@@ -161,32 +162,17 @@ export class Poof implements INodeType {
 					const buffer = await this.helpers.getBinaryDataBuffer(i, binaryPropertyName);
 
 					// Build form data
-					const formData: IDataObject = {
-						image_file: {
-							value: buffer,
-							options: {
-								filename: binaryData.fileName || 'image.png',
-								contentType: binaryData.mimeType || 'image/png',
-							},
-						},
-					};
+					const form = new FormData();
+					form.append('image_file', buffer, {
+						filename: binaryData.fileName || 'image.png',
+						contentType: binaryData.mimeType || 'image/png',
+					});
 
-					// Add options to form data
-					if (options.format) {
-						formData.format = options.format;
-					}
-					if (options.channels) {
-						formData.channels = options.channels;
-					}
-					if (options.bg_color) {
-						formData.bg_color = options.bg_color;
-					}
-					if (options.size) {
-						formData.size = options.size;
-					}
-					if (options.crop !== undefined) {
-						formData.crop = options.crop;
-					}
+					if (options.format) form.append('format', options.format as string);
+					if (options.channels) form.append('channels', options.channels as string);
+					if (options.bg_color) form.append('bg_color', options.bg_color as string);
+					if (options.size) form.append('size', options.size as string);
+					if (options.crop !== undefined) form.append('crop', String(options.crop));
 
 					const response = await this.helpers.httpRequestWithAuthentication.call(
 						this,
@@ -194,12 +180,10 @@ export class Poof implements INodeType {
 						{
 							method: 'POST',
 							url: 'https://api.poof.bg/v1/remove',
-							body: formData,
+							body: form,
 							encoding: 'arraybuffer',
 							returnFullResponse: true,
-							headers: {
-								'Content-Type': 'multipart/form-data',
-							},
+							headers: form.getHeaders(),
 						},
 					);
 
