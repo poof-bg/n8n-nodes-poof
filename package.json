@@ -1,6 +1,6 @@
 {
   "name": "@poof-bg/n8n-nodes-poof",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "n8n nodes for Poof background removal API",
   "keywords": [
     "n8n-community-node-package",
