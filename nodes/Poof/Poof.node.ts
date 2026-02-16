@@ -6,7 +6,7 @@ import type {
 	IDataObject,
 } from 'n8n-workflow';
 import { NodeOperationError } from 'n8n-workflow';
-import FormData from 'form-data';
+
 
 export class Poof implements INodeType {
 	description: INodeTypeDescription = {
@@ -163,10 +163,11 @@ export class Poof implements INodeType {
 
 					// Build form data
 					const form = new FormData();
-					form.append('image_file', buffer, {
-						filename: binaryData.fileName || 'image.png',
-						contentType: binaryData.mimeType || 'image/png',
-					});
+					form.append(
+						'image_file',
+						new Blob([buffer], { type: binaryData.mimeType || 'image/png' }),
+						binaryData.fileName || 'image.png',
+					);
 
 					if (options.format) form.append('format', options.format as string);
 					if (options.channels) form.append('channels', options.channels as string);
@@ -183,7 +184,6 @@ export class Poof implements INodeType {
 							body: form,
 							encoding: 'arraybuffer',
 							returnFullResponse: true,
-							headers: form.getHeaders(),
 						},
 					);
 
