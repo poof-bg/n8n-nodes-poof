@@ -215,6 +215,7 @@ export class Poof implements INodeType {
 								contentType,
 							),
 						},
+						pairedItem: { item: i },
 					};
 
 					returnData.push(newItem);
@@ -231,6 +232,7 @@ export class Poof implements INodeType {
 
 					returnData.push({
 						json: response as IDataObject,
+						pairedItem: { item: i },
 					});
 				}
 			} catch (error) {
@@ -239,6 +241,7 @@ export class Poof implements INodeType {
 						json: {
 							error: (error as Error).message,
 						},
+						pairedItem: { item: i },
 					});
 					continue;
 				}
