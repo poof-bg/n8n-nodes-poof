@@ -1,6 +1,6 @@
 {
   "name": "@poof-bg/n8n-nodes-poof",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "n8n nodes for Poof background removal API",
   "keywords": [
     "n8n-community-node-package",
@@ -23,8 +23,8 @@
   "scripts": {
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
-    "lint": "eslint nodes credentials package.json --ext .ts,.json",
-    "lintfix": "eslint nodes credentials package.json --ext .ts,.json --fix",
+    "lint": "eslint .",
+    "lintfix": "eslint . --fix",
     "test": "npm run lint",
     "prepublishOnly": "npm run build"
   },
@@ -41,12 +41,11 @@
     ]
   },
   "devDependencies": {
+    "@n8n/eslint-plugin-community-nodes": "^0.10.0",
     "@types/node": "^20.10.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "eslint": "^8.56.0",
-    "eslint-plugin-n8n-nodes-base": "^1.16.5",
+    "@typescript-eslint/typescript-estree": "^8.57.2",
+    "eslint": "^9.39.4",
     "gulp": "^4.0.2",
-    "jsonc-eslint-parser": "^2.4.2",
     "n8n-workflow": "^1.22.0",
     "typescript": "^5.3.0"
   },

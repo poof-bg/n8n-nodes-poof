@@ -4,8 +4,9 @@ import type {
 	INodeType,
 	INodeTypeDescription,
 	IDataObject,
+	JsonObject,
 } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
+import { NodeApiError, NodeConnectionTypes } from 'n8n-workflow';
 
 
 export class Poof implements INodeType {
@@ -20,8 +21,8 @@ export class Poof implements INodeType {
 		defaults: {
 			name: 'Poof',
 		},
-		inputs: ['main'],
-		outputs: ['main'],
+		inputs: [NodeConnectionTypes.Main],
+		outputs: [NodeConnectionTypes.Main],
 		credentials: [
 			{
 				name: 'poofApi',
@@ -36,16 +37,16 @@ export class Poof implements INodeType {
 				noDataExpression: true,
 				options: [
 					{
-						name: 'Remove Background',
-						value: 'removeBackground',
-						description: 'Remove background from an image',
-						action: 'Remove background from an image',
-					},
-					{
 						name: 'Get Account',
 						value: 'getAccount',
 						description: 'Get account information and credit usage',
 						action: 'Get account information',
+					},
+					{
+						name: 'Remove Background',
+						value: 'removeBackground',
+						description: 'Remove background from an image',
+						action: 'Remove background from an image',
 					},
 				],
 				default: 'removeBackground',
@@ -245,7 +246,7 @@ export class Poof implements INodeType {
 					});
 					continue;
 				}
-				throw new NodeOperationError(this.getNode(), error as Error, {
+				throw new NodeApiError(this.getNode(), error as JsonObject, {
 					itemIndex: i,
 				});
 			}
