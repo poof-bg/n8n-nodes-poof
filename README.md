@@ -1,6 +1,8 @@
 # @poof-bg/n8n-nodes-poof
 
-This is an n8n community node for the [Poof](https://poof.bg) background removal API.
+This is an n8n community node for the [Poof](https://poof.bg) [background removal API](https://poof.bg/background-removal-api).
+
+Migrating from remove.bg? It shuts down on 1 December 2026 — see the [remove.bg alternative and migration guide](https://poof.bg/alternative/remove-bg).
 
 Poof is the developer-first standard for background removal — precise, fast, and scalable.
 
