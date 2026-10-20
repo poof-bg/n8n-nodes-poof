@@ -26,7 +26,7 @@
     "dev": "tsc --watch",
     "lint": "eslint .",
     "lintfix": "eslint . --fix",
-    "test": "npm run lint",
+    "test": "npm run lint && npm run build && node --test test/*.test.cjs",
     "prepublishOnly": "npm run build"
   },
   "files": [

@@ -10,6 +10,37 @@ import { NodeApiError, NodeConnectionTypes, NodeOperationError, sleep } from 'n8
 
 const API_URL = 'https://api.poof.bg/v1';
 const JOB_POLL_INTERVAL_MS = 3000;
+/** Default wait for a video job; long 4K clips can take well over 10 minutes */
+const DEFAULT_JOB_TIMEOUT_MINUTES = 30;
+/** Retries for a job poll that hits a transient error (5xx, 429 or a network error) */
+const JOB_POLL_MAX_RETRIES = 4;
+const JOB_POLL_RETRY_BASE_MS = 2000;
+
+/** HTTP status of an error thrown by n8n's request helpers, if there is one */
+function errorStatus(error: unknown): number | undefined {
+	const e = error as {
+		httpCode?: string | number;
+		statusCode?: number;
+		status?: number;
+		response?: { status?: number; statusCode?: number };
+		cause?: { status?: number; response?: { status?: number } };
+	};
+	const status =
+		e?.response?.status ??
+		e?.response?.statusCode ??
+		e?.statusCode ??
+		e?.status ??
+		e?.cause?.response?.status ??
+		e?.cause?.status ??
+		(e?.httpCode !== undefined ? Number(e.httpCode) : undefined);
+	return typeof status === 'number' && Number.isFinite(status) ? status : undefined;
+}
+
+/** A failed poll worth retrying: no HTTP status (network error), 429 or 5xx */
+function isTransientError(error: unknown): boolean {
+	const status = errorStatus(error);
+	return status === undefined || status === 429 || status >= 500;
+}
 
 const VIDEO_MIME_TYPES: Record<string, string> = {
 	webm: 'video/webm',
@@ -60,7 +91,8 @@ export class Poof implements INodeType {
 					{
 						name: 'Remove Video Background',
 						value: 'removeVideoBackground',
-						description: 'Remove background from a video. Costs 5 credits per second of video (10 per second above 30 fps).',
+						description:
+							'Remove background from a video or animated GIF. Costs 5 credits per second, rounded up (10 per second above 30 fps; animated GIF input is always 5 per second).',
 						action: 'Remove background from a video',
 					},
 				],
@@ -111,7 +143,8 @@ export class Poof implements INodeType {
 						type: 'color',
 						default: '',
 						placeholder: '#ffffff',
-						description: 'Background color (hex, rgb, or color name). Only applies when channels is RGB.',
+						description:
+							'Background color (hex, rgb, or color name). Used for RGB output and JPG; ignored for transparent output. Defaults to white.',
 					},
 					{
 						displayName: 'Channels',
@@ -252,7 +285,7 @@ export class Poof implements INodeType {
 						default: '',
 						placeholder: '#00ff00',
 						description:
-							'Background color (hex, rgb, or color name) behind the subject. Applies to RGB output and to MP4, which has no transparency.',
+							'Background color (hex, rgb, or color name) behind the subject. Used for RGB output and MP4, which has no transparency; ignored for transparent output. Defaults to white.',
 					},
 					{
 						displayName: 'Channels',
@@ -278,7 +311,7 @@ export class Poof implements INodeType {
 						],
 						default: 'webm',
 						description:
-							'Output video format. GIF loops, has hard-edged (1-bit) transparency and no audio, and is capped at 720p (1280 px) and 50 fps; pick Preview size to keep the file small. Billed like video.',
+							'Output video format. GIF loops, has hard-edged (1-bit) transparency and no audio, and is capped at 1280 px on the longest side (720p for widescreen) and 50 fps; pick Preview size to keep the file small. Billing depends on the input, not the output format.',
 					},
 					{
 						displayName: 'Size',
@@ -299,8 +332,9 @@ export class Poof implements INodeType {
 						name: 'timeoutMinutes',
 						type: 'number',
 						typeOptions: { minValue: 1 },
-						default: 10,
-						description: 'How long to wait for the job to finish before failing. The job keeps running on Poof and can be fetched later.',
+						default: DEFAULT_JOB_TIMEOUT_MINUTES,
+						description:
+							'How long to wait for the job to finish before failing (default 30; long 4K clips can take a while). The job keeps running on Poof and can be fetched later.',
 					},
 				],
 			},
@@ -334,7 +368,9 @@ export class Poof implements INodeType {
 					if (options.channels) form.append('channels', options.channels as string);
 					if (options.bg_color) form.append('bg_color', options.bg_color as string);
 					if (options.size) form.append('size', options.size as string);
-					if (options.crop !== undefined) form.append('crop', String(options.crop));
+					// crop is off by default and image-only: sending crop=false with an
+					// animated GIF (processed as a video) would be rejected with a 400
+					if (options.crop === true) form.append('crop', 'true');
 
 					const response = await this.helpers.httpRequestWithAuthentication.call(
 						this,
@@ -352,7 +388,7 @@ export class Poof implements INodeType {
 					if (response.statusCode === 202) {
 						throw new NodeOperationError(
 							this.getNode(),
-							'The input is a video. Use the Remove Video Background operation for videos.',
+							'The input is a video or an animated GIF, which Poof processes as a video. Use the Remove Video Background operation instead.',
 							{ itemIndex: i },
 						);
 					}
@@ -432,7 +468,7 @@ export class Poof implements INodeType {
 					}
 
 					let job = JSON.parse(Buffer.from(response.body as Buffer).toString('utf8')) as IDataObject;
-					const timeoutMinutes = (options.timeoutMinutes as number) || 10;
+					const timeoutMinutes = (options.timeoutMinutes as number) || DEFAULT_JOB_TIMEOUT_MINUTES;
 					const deadline = Date.now() + timeoutMinutes * 60_000;
 
 					while (job.status !== 'completed' && job.status !== 'failed') {
@@ -444,11 +480,20 @@ export class Poof implements INodeType {
 							);
 						}
 						await sleep(JOB_POLL_INTERVAL_MS);
-						job = (await this.helpers.httpRequestWithAuthentication.call(this, 'poofApi', {
-							method: 'GET',
-							url: `${API_URL}/jobs/${job.id}`,
-							json: true,
-						})) as IDataObject;
+						// Polling is free; ride out brief 5xx / network blips with backoff
+						for (let attempt = 0; ; attempt++) {
+							try {
+								job = (await this.helpers.httpRequestWithAuthentication.call(this, 'poofApi', {
+									method: 'GET',
+									url: `${API_URL}/jobs/${job.id}`,
+									json: true,
+								})) as IDataObject;
+								break;
+							} catch (error) {
+								if (attempt >= JOB_POLL_MAX_RETRIES || !isTransientError(error)) throw error;
+								await sleep(JOB_POLL_RETRY_BASE_MS * 2 ** attempt);
+							}
+						}
 					}
 
 					if (job.status === 'failed') {
