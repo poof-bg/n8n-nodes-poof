@@ -28,7 +28,7 @@ npm install @poof-bg/n8n-nodes-poof
 
 ### Remove Background
 
-Remove the background from an image.
+Remove the background from an image (PNG, JPG, WebP or a still GIF). An animated GIF is processed as a video: use **Remove Video Background** for it (this operation fails with a message saying so).
 
 **Parameters:**
 
@@ -42,10 +42,38 @@ Remove the background from an image.
 | Option | Description | Default |
 |--------|-------------|---------|
 | Format | Output format: PNG, JPG, or WebP | PNG |
-| Channels | RGBA (transparent) or RGB (opaque) | RGBA |
-| Background Color | Color for RGB output (hex, rgb, or name) | - |
-| Size | Output size: full, preview, small, medium, large | full |
-| Crop to Subject | Crop image to subject bounds | false |
+| Channels | RGBA (transparent), RGB (opaque) or Alpha (grayscale mask only) | RGBA |
+| Background Color | Color for RGB and JPG output (hex, rgb, or name); ignored for transparent output | white |
+| Size | Output size preset: full, hd, medium, preview | full |
+| Crop to Subject | Crop image to subject bounds (only sent when on) | false |
+
+### Remove Video Background
+
+Remove the background from a video (MP4, MOV, WebM, M4V, MKV or animated GIF, up to 5 minutes). The node submits the video, polls the job every 3 seconds until it is done (retrying brief 5xx or network errors with backoff), and downloads the result.
+
+Billing: 5 credits per second of video, rounded up (10 per second above 30 fps). Animated GIF input is always 5 credits per second, whatever its frame rate. Credits are charged when the job is accepted and refunded if it fails; if your remaining credits don't cover the whole clip, Poof rejects it with 402 Payment Required. Audio is kept except for GIF output and Alpha (mask) output.
+
+**Parameters:**
+
+| Parameter | Description |
+|-----------|-------------|
+| Input | Binary File (upload, max 100 MB) or URL (public video URL, max 500 MB) |
+| Input Binary Field | Name of the binary property containing the video (Binary File input) |
+| Video URL | Public URL of the video (URL input) |
+| Download Result | Download the finished video into a binary property. Off: return the job only; its `result_url` is a direct link valid for 24 hours |
+| Output Binary Field | Name of the binary property for the result |
+
+**Options:**
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| Format | WebM (VP9, transparent), MOV (ProRes 4444, transparent), MP4 (H.264, no transparency) or GIF (looping, 1-bit transparency, no audio, capped at 1280 px on the longest side (720p for widescreen) and 50 fps) | WebM |
+| Channels | RGBA (transparent), RGB (on a background color) or Alpha (mask only) | RGBA |
+| Background Color | Color behind the subject for RGB and MP4 output, e.g. `#00ff00` for green screen; ignored for transparent output | white |
+| Size | Longest-side cap: preview 640 px, medium 1280 px, hd 1920 px; full keeps the source resolution up to 4096 px (4K) | full |
+| Timeout (Minutes) | How long to wait for the job before failing. Long 4K clips can take a while; raise it if needed. The job keeps running on Poof after a timeout and can be fetched with `GET /v1/jobs/{id}` | 30 |
+
+The output JSON is the job: `id`, `status`, `credits`, `duration_seconds`, `fps`, `result_url`, `expires_at`, `stats` and more.
 
 ### Get Account
 
@@ -77,6 +105,8 @@ You need a Poof API key to use this node.
 1. **Read Binary File**: Load an image
 2. **Poof**: Remove the background
 3. **Write Binary File**: Save the result
+
+The same works for video: `[Read Binary File (clip.mp4)] → [Poof: Remove Video Background] → [Write Binary File (clip.webm)]`.
 
 ## Resources
 
