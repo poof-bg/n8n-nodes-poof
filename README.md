@@ -49,7 +49,7 @@ Remove the background from an image.
 
 ### Remove Video Background
 
-Remove the background from a video (MP4, MOV, WebM, M4V or MKV, up to 5 minutes). The node submits the video, polls the job every 3 seconds until it is done, and downloads the result. Costs 5 credits per second of video (10 per second above 30 fps); credits are refunded if the job fails.
+Remove the background from a video (MP4, MOV, WebM, M4V, MKV or animated GIF, up to 5 minutes). The node submits the video, polls the job every 3 seconds until it is done, and downloads the result. Costs 5 credits per second of video (10 per second above 30 fps); credits are refunded if the job fails.
 
 **Parameters:**
 
@@ -65,7 +65,7 @@ Remove the background from a video (MP4, MOV, WebM, M4V or MKV, up to 5 minutes)
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| Format | WebM (VP9, transparent), MOV (ProRes 4444, transparent) or MP4 (H.264, no transparency) | WebM |
+| Format | WebM (VP9, transparent), MOV (ProRes 4444, transparent) MP4 (H.264, no transparency) or GIF (animated, 1-bit transparency, max 50 fps) | WebM |
 | Channels | RGBA (transparent), RGB (on a background color) or Alpha (mask only) | RGBA |
 | Background Color | Color behind the subject for RGB and MP4 output, e.g. `#00ff00` for green screen | - |
 | Size | Longest-side cap: preview 640 px, medium 1280 px, hd 1920 px; full keeps the source resolution up to 4096 px (4K) | full |

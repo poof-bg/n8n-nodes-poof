@@ -15,6 +15,7 @@ const VIDEO_MIME_TYPES: Record<string, string> = {
 	webm: 'video/webm',
 	mov: 'video/quicktime',
 	mp4: 'video/mp4',
+	gif: 'image/gif',
 };
 
 export class Poof implements INodeType {
@@ -174,7 +175,7 @@ export class Poof implements INodeType {
 						operation: ['removeVideoBackground'],
 					},
 				},
-				description: 'Where the video comes from. MP4, MOV, WebM, M4V and MKV up to 5 minutes are supported.',
+				description: 'Where the video comes from. MP4, MOV, WebM, M4V, MKV and animated GIF up to 5 minutes are supported.',
 			},
 			{
 				displayName: 'Input Binary Field',
@@ -273,9 +274,11 @@ export class Poof implements INodeType {
 							{ name: 'WebM (VP9, Transparent)', value: 'webm' },
 							{ name: 'MOV (ProRes 4444, Transparent)', value: 'mov' },
 							{ name: 'MP4 (H.264, No Transparency)', value: 'mp4' },
+							{ name: 'GIF (Animated, 1-Bit Transparency)', value: 'gif' },
 						],
 						default: 'webm',
-						description: 'Output video format',
+						description:
+							'Output video format. GIF has hard-edged (1-bit) transparency and is capped at 50 fps; pick Preview or Medium size to keep the file small.',
 					},
 					{
 						displayName: 'Size',
