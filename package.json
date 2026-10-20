@@ -1,13 +1,14 @@
 {
   "name": "@poof-bg/n8n-nodes-poof",
-  "version": "1.0.7",
-  "description": "n8n nodes for Poof background removal API",
+  "version": "1.1.0",
+  "description": "n8n nodes for Poof background removal API (images and videos)",
   "keywords": [
     "n8n-community-node-package",
     "n8n",
     "poof",
     "background-removal",
-    "image-processing"
+    "image-processing",
+    "video-background-removal"
   ],
   "license": "MIT",
   "homepage": "https://poof.bg",

@@ -47,6 +47,32 @@ Remove the background from an image.
 | Size | Output size: full, preview, small, medium, large | full |
 | Crop to Subject | Crop image to subject bounds | false |
 
+### Remove Video Background
+
+Remove the background from a video (MP4, MOV, WebM, M4V or MKV, up to 5 minutes). The node submits the video, polls the job every 3 seconds until it is done, and downloads the result. Costs 5 credits per second of video (10 per second above 30 fps); credits are refunded if the job fails.
+
+**Parameters:**
+
+| Parameter | Description |
+|-----------|-------------|
+| Input | Binary File (upload, max 100 MB) or URL (public video URL, max 500 MB) |
+| Input Binary Field | Name of the binary property containing the video (Binary File input) |
+| Video URL | Public URL of the video (URL input) |
+| Download Result | Download the finished video into a binary property. Off: return the job only; its `result_url` is a direct link valid for 24 hours |
+| Output Binary Field | Name of the binary property for the result |
+
+**Options:**
+
+| Option | Description | Default |
+|--------|-------------|---------|
+| Format | WebM (VP9, transparent), MOV (ProRes 4444, transparent) or MP4 (H.264, no transparency) | WebM |
+| Channels | RGBA (transparent), RGB (on a background color) or Alpha (mask only) | RGBA |
+| Background Color | Color behind the subject for RGB and MP4 output, e.g. `#00ff00` for green screen | - |
+| Size | Longest-side cap: preview 640 px, medium 1280 px, hd/full 1920 px | full |
+| Timeout (Minutes) | How long to wait for the job before failing | 10 |
+
+The output JSON is the job: `id`, `status`, `credits`, `duration_seconds`, `fps`, `result_url`, `expires_at`, `stats` and more.
+
 ### Get Account
 
 Retrieve account information including plan details and credit usage.
@@ -77,6 +103,8 @@ You need a Poof API key to use this node.
 1. **Read Binary File**: Load an image
 2. **Poof**: Remove the background
 3. **Write Binary File**: Save the result
+
+The same works for video: `[Read Binary File (clip.mp4)] → [Poof: Remove Video Background] → [Write Binary File (clip.webm)]`.
 
 ## Resources
 
