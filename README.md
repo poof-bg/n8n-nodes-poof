@@ -68,7 +68,7 @@ Remove the background from a video (MP4, MOV, WebM, M4V or MKV, up to 5 minutes)
 | Format | WebM (VP9, transparent), MOV (ProRes 4444, transparent) or MP4 (H.264, no transparency) | WebM |
 | Channels | RGBA (transparent), RGB (on a background color) or Alpha (mask only) | RGBA |
 | Background Color | Color behind the subject for RGB and MP4 output, e.g. `#00ff00` for green screen | - |
-| Size | Longest-side cap: preview 640 px, medium 1280 px, hd/full 1920 px | full |
+| Size | Longest-side cap: preview 640 px, medium 1280 px, hd 1920 px; full keeps the source resolution up to 4096 px (4K) | full |
 | Timeout (Minutes) | How long to wait for the job before failing | 10 |
 
 The output JSON is the job: `id`, `status`, `credits`, `duration_seconds`, `fps`, `result_url`, `expires_at`, `stats` and more.

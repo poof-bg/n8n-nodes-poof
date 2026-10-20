@@ -281,13 +281,14 @@ export class Poof implements INodeType {
 						name: 'size',
 						type: 'options',
 						options: [
-							{ name: 'Full (1920 Px)', value: 'full' },
+							{ name: 'Full (Source, Up To 4096 Px)', value: 'full' },
 							{ name: 'HD (1920 Px)', value: 'hd' },
 							{ name: 'Medium (1280 Px)', value: 'medium' },
 							{ name: 'Preview (640 Px)', value: 'preview' },
 						],
 						default: 'full',
-						description: 'Cap on the longest side of the output video. Output is never larger than 1920 px or the source.',
+						description:
+							'Cap on the longest side of the output video. Full keeps the source resolution up to 4096 px (4K); output is never upscaled beyond the source.',
 					},
 					{
 						displayName: 'Timeout (Minutes)',
