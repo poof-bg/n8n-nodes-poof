@@ -65,7 +65,7 @@ Remove the background from a video (MP4, MOV, WebM, M4V, MKV or animated GIF, up
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| Format | WebM (VP9, transparent), MOV (ProRes 4444, transparent) MP4 (H.264, no transparency) or GIF (animated, 1-bit transparency, max 50 fps) | WebM |
+| Format | WebM (VP9, transparent), MOV (ProRes 4444, transparent), MP4 (H.264, no transparency) or GIF (looping, 1-bit transparency, no audio, capped at 720p / 1280 px and 50 fps, billed like video) | WebM |
 | Channels | RGBA (transparent), RGB (on a background color) or Alpha (mask only) | RGBA |
 | Background Color | Color behind the subject for RGB and MP4 output, e.g. `#00ff00` for green screen | - |
 | Size | Longest-side cap: preview 640 px, medium 1280 px, hd 1920 px; full keeps the source resolution up to 4096 px (4K) | full |

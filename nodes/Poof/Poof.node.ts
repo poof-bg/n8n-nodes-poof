@@ -278,7 +278,7 @@ export class Poof implements INodeType {
 						],
 						default: 'webm',
 						description:
-							'Output video format. GIF has hard-edged (1-bit) transparency and is capped at 50 fps; pick Preview or Medium size to keep the file small.',
+							'Output video format. GIF loops, has hard-edged (1-bit) transparency and no audio, and is capped at 720p (1280 px) and 50 fps; pick Preview size to keep the file small. Billed like video.',
 					},
 					{
 						displayName: 'Size',
