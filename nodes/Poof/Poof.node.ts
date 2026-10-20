@@ -119,9 +119,11 @@ export class Poof implements INodeType {
 						options: [
 							{ name: 'RGBA (Transparent)', value: 'rgba' },
 							{ name: 'RGB (Opaque)', value: 'rgb' },
+							{ name: 'Alpha (Mask Only)', value: 'alpha' },
 						],
 						default: 'rgba',
-						description: 'Output color channels. Use RGBA for transparency, RGB for opaque background.',
+						description:
+							'Output color channels. Use RGBA for transparency, RGB for an opaque background, or Alpha for the grayscale mask only.',
 					},
 					{
 						displayName: 'Crop to Subject',
@@ -148,13 +150,12 @@ export class Poof implements INodeType {
 						type: 'options',
 						options: [
 							{ name: 'Full', value: 'full' },
-							{ name: 'Large', value: 'large' },
+							{ name: 'HD', value: 'hd' },
 							{ name: 'Medium', value: 'medium' },
 							{ name: 'Preview', value: 'preview' },
-							{ name: 'Small', value: 'small' },
 						],
 						default: 'full',
-						description: 'Output image size preset',
+						description: 'Output image size preset (a megapixel cap). Full keeps the source resolution.',
 					},
 				],
 			},
@@ -343,6 +344,15 @@ export class Poof implements INodeType {
 							returnFullResponse: true,
 						},
 					);
+
+					// A video sent here starts a job (202 + JSON) instead of returning an image.
+					if (response.statusCode === 202) {
+						throw new NodeOperationError(
+							this.getNode(),
+							'The input is a video. Use the Remove Video Background operation for videos.',
+							{ itemIndex: i },
+						);
+					}
 
 					const contentType = response.headers['content-type'] as string || 'image/png';
 					const format = options.format as string || 'png';

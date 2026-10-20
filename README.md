@@ -42,9 +42,9 @@ Remove the background from an image.
 | Option | Description | Default |
 |--------|-------------|---------|
 | Format | Output format: PNG, JPG, or WebP | PNG |
-| Channels | RGBA (transparent) or RGB (opaque) | RGBA |
+| Channels | RGBA (transparent), RGB (opaque) or Alpha (grayscale mask only) | RGBA |
 | Background Color | Color for RGB output (hex, rgb, or name) | - |
-| Size | Output size: full, preview, small, medium, large | full |
+| Size | Output size preset: full, hd, medium, preview | full |
 | Crop to Subject | Crop image to subject bounds | false |
 
 ### Remove Video Background
