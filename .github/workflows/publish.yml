@@ -33,9 +33,10 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
+      # npm@latest (needed for trusted publishing) requires Node 22.22+ / 24.15+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           registry-url: https://registry.npmjs.org
       - run: npm install -g npm@latest
       - run: npm ci
