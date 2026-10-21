@@ -43,7 +43,7 @@ Remove the background from an image (PNG, JPG, WebP or a still GIF). An animated
 |--------|-------------|---------|
 | Format | Output format: PNG, JPG, or WebP | PNG |
 | Channels | RGBA (transparent), RGB (opaque) or Alpha (grayscale mask only) | RGBA |
-| Background Color | Color for RGB and JPG output (hex, rgb, or name); ignored for transparent output | white |
+| Background Color | Hex, rgb, or name. Setting it fills the background, so the result is opaque; with RGB or JPG and no color the background is white. Ignored with Alpha | none (white for RGB/JPG) |
 | Size | Output size preset: full, hd, medium, preview | full |
 | Crop to Subject | Crop image to subject bounds (only sent when on) | false |
 
@@ -69,7 +69,7 @@ Billing: 5 credits per second of video, rounded up (10 per second above 30 fps).
 |--------|-------------|---------|
 | Format | WebM (VP9, transparent), MOV (ProRes 4444, transparent), MP4 (H.264, no transparency) or GIF (looping, 1-bit transparency, no audio, capped at 1280 px on the longest side (720p for widescreen) and 50 fps) | WebM |
 | Channels | RGBA (transparent), RGB (on a background color) or Alpha (mask only) | RGBA |
-| Background Color | Color behind the subject for RGB and MP4 output, e.g. `#00ff00` for green screen; ignored for transparent output | white |
+| Background Color | Color behind the subject, e.g. `#00ff00` for green screen. Setting it fills the background, so the video is opaque in every format (WebM, MOV and GIF included); with RGB or MP4 and no color the background is white. Ignored with Alpha | none (white for RGB/MP4) |
 | Size | Longest-side cap: preview 640 px, medium 1280 px, hd 1920 px; full keeps the source resolution up to 4096 px (4K) | full |
 | Timeout (Minutes) | How long to wait for the job before failing. Long 4K clips can take a while; raise it if needed. The job keeps running on Poof after a timeout and can be fetched with `GET /v1/jobs/{id}` | 30 |
 
