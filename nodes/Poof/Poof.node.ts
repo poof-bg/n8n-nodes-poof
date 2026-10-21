@@ -53,11 +53,12 @@ export class Poof implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Poof',
 		name: 'poof',
-		icon: 'file:poof.svg',
+		icon: { light: 'file:poof.svg', dark: 'file:poof.dark.svg' },
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'Remove backgrounds from images and videos with Poof API',
+		usableAsTool: true,
 		defaults: {
 			name: 'Poof',
 		},
@@ -490,7 +491,10 @@ export class Poof implements INodeType {
 								})) as IDataObject;
 								break;
 							} catch (error) {
-								if (attempt >= JOB_POLL_MAX_RETRIES || !isTransientError(error)) throw error;
+								if (attempt >= JOB_POLL_MAX_RETRIES || !isTransientError(error)) {
+									// Returns `error` itself when it already is a NodeApiError
+									throw new NodeApiError(this.getNode(), error as JsonObject, { itemIndex: i });
+								}
 								await sleep(JOB_POLL_RETRY_BASE_MS * 2 ** attempt);
 							}
 						}
@@ -556,7 +560,10 @@ export class Poof implements INodeType {
 					});
 					continue;
 				}
-				if (error instanceof NodeOperationError) throw error;
+				// Both constructors return `error` unchanged when it already has their type
+				if (error instanceof NodeOperationError) {
+					throw new NodeOperationError(this.getNode(), error, { itemIndex: i });
+				}
 				throw new NodeApiError(this.getNode(), error as JsonObject, {
 					itemIndex: i,
 				});

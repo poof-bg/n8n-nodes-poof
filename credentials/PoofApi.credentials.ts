@@ -9,7 +9,7 @@ export class PoofApi implements ICredentialType {
 	name = 'poofApi';
 	displayName = 'Poof API';
 	documentationUrl = 'https://docs.poof.bg';
-	icon: ICredentialType['icon'] = 'file:poof.svg';
+	icon: ICredentialType['icon'] = { light: 'file:poof.svg', dark: 'file:poof.dark.svg' };
 	properties: INodeProperties[] = [
 		{
 			displayName: 'API Key',
