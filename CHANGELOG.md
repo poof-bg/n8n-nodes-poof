@@ -3,6 +3,13 @@
 All notable changes to `@poof-bg/n8n-nodes-poof` are documented here.
 This project follows [Semantic Versioning](https://semver.org/).
 
+## 1.2.2 - 2026-10-21
+
+- Background Color help (Remove Background and Remove Video Background) follows the API rule:
+  setting it fills the background, so the result is opaque, for videos in every format (WebM,
+  MOV and GIF included); with RGB channels (or JPG/MP4) and no color the background is white;
+  ignored with Alpha channels. It used to say the color was ignored for transparent output.
+
 ## 1.2.1 - 2026-10-21
 
 Fixes for n8n verification: `usableAsTool`, `NodeApiError` and themed icons.

@@ -145,7 +145,7 @@ export class Poof implements INodeType {
 						default: '',
 						placeholder: '#ffffff',
 						description:
-							'Background color (hex, rgb, or color name). Used for RGB output and JPG; ignored for transparent output. Defaults to white.',
+							'Background color (hex, rgb, or color name). Setting it fills the background, so the result is opaque; with RGB channels or JPG and no color the background is white. Ignored with Alpha channels.',
 					},
 					{
 						displayName: 'Channels',
@@ -286,7 +286,7 @@ export class Poof implements INodeType {
 						default: '',
 						placeholder: '#00ff00',
 						description:
-							'Background color (hex, rgb, or color name) behind the subject. Used for RGB output and MP4, which has no transparency; ignored for transparent output. Defaults to white.',
+							'Background color (hex, rgb, or color name) behind the subject. Setting it fills the background, so the video is opaque in every format (WebM, MOV and GIF included); with RGB channels or MP4 and no color the background is white. Ignored with Alpha channels.',
 					},
 					{
 						displayName: 'Channels',
